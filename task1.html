@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>User Authentication</title>
+
+<style>
+body{
+    margin:0;
+    font-family: Arial;
+    background:#eef2f7;
+}
+.container{
+    max-width:350px;
+    margin:60px auto;
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 0 15px rgba(0,0,0,0.1);
+    text-align:center;
+}
+.circle{
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    margin:10px auto;
+    background:linear-gradient(45deg,#4facfe,#00f2fe);
+}
+.square{
+    width:70px;
+    height:70px;
+    margin:10px auto;
+    background:linear-gradient(45deg,#1d4ed8,#38bdf8);
+}
+.lock{
+    font-size:40px;
+}
+input,button{
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+}
+button{
+    background:#1d4ed8;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+.link{
+    color:#1d4ed8;
+    cursor:pointer;
+    font-size:14px;
+}
+.hidden{
+    display:none;
+}
+.quote{
+    font-size:14px;
+    font-style:italic;
+    margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div class="container" id="loginBox">
+    <div class="circle"></div>
+    <div class="lock">🔒</div>
+    <h2>Login</h2>
+
+    <input id="loginUser" placeholder="Username">
+    <input id="loginPass" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+
+    <p class="link" onclick="showRegister()">Create Account</p>
+    <p class="quote">“Comillas Negras”</p>
+</div>
+
+<!-- REGISTER -->
+<div class="container hidden" id="registerBox">
+    <div class="square"></div>
+    <h2>Register</h2>
+
+    <input id="regUser" placeholder="Username">
+    <input id="regPass" type="password" placeholder="Password">
+    <button onclick="register()">Sign Up</button>
+
+    <p class="link" onclick="showLogin()">Back to Login</p>
+</div>
+
+<!-- DASHBOARD (Protected Route) -->
+<div class="container hidden" id="dashboard">
+    <div class="circle"></div>
+    <h2>Welcome 🎉</h2>
+    <p>You have accessed a protected route.</p>
+    <button onclick="logout()">Logout</button>
+</div>
+
+<script>
+let users = {};
+
+function register(){
+    let u = regUser.value;
+    let p = regPass.value;
+    if(u && p){
+        users[u] = btoa(p); // simulated password hashing
+        alert("Registration successful");
+        showLogin();
+    }
+}
+
+function login(){
+    let u = loginUser.value;
+    let p = loginPass.value;
+    if(users[u] && users[u] === btoa(p)){
+        loginBox.classList.add("hidden");
+        dashboard.classList.remove("hidden");
+        sessionStorage.setItem("auth",true);
+    } else {
+        alert("Invalid credentials");
+    }
+}
+
+function logout(){
+    sessionStorage.clear();
+    dashboard.classList.add("hidden");
+    loginBox.classList.remove("hidden");
+}
+
+function showRegister(){
+    loginBox.classList.add("hidden");
+    registerBox.classList.remove("hidden");
+}
+
+function showLogin(){
+    registerBox.classList.add("hidden");
+    loginBox.classList.remove("hidden");
+}
+</script>
+
+</body>
+</html>
