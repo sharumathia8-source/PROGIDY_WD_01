@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Employee Management System</title>
+
+<style>
+body{
+    font-family: Arial;
+    background:#eef2f7;
+    margin:0;
+}
+.container{
+    max-width:400px;
+    margin:40px auto;
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 0 15px rgba(0,0,0,0.1);
+    text-align:center;
+}
+.circle{
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    margin:10px auto;
+    background:linear-gradient(45deg,#6366f1,#38bdf8);
+}
+input,button{
+    width:100%;
+    padding:10px;
+    margin:6px 0;
+}
+button{
+    background:#6366f1;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+th,td{
+    border:1px solid #ccc;
+    padding:6px;
+    font-size:14px;
+}
+th{
+    background:#e0e7ff;
+}
+.hidden{
+    display:none;
+}
+.quote{
+    font-size:13px;
+    font-style:italic;
+    margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div class="container" id="loginBox">
+    <div class="circle"></div>
+    <h2>Admin Login</h2>
+    <input id="user" placeholder="Username">
+    <input id="pass" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <p class="quote">“Comillas Negras”</p>
+</div>
+
+<!-- DASHBOARD -->
+<div class="container hidden" id="dashboard">
+    <div class="circle"></div>
+    <h2>Employee Management</h2>
+
+    <input id="empName" placeholder="Employee Name">
+    <input id="empRole" placeholder="Role">
+    <input id="empSalary" placeholder="Salary">
+    <button onclick="addEmployee()">Add Employee</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Salary</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="empTable"></tbody>
+    </table>
+
+    <button onclick="logout()">Logout</button>
+</div>
+
+<script>
+/* Authentication */
+const adminUser = "admin";
+const adminPass = btoa("admin123"); // simulated hash
+
+let employees = [];
+let editIndex = -1;
+
+function login(){
+    if(user.value===adminUser && btoa(pass.value)===adminPass){
+        loginBox.classList.add("hidden");
+        dashboard.classList.remove("hidden");
+        sessionStorage.setItem("auth",true);
+    }else{
+        alert("Invalid admin credentials");
+    }
+}
+
+function logout(){
+    sessionStorage.clear();
+    dashboard.classList.add("hidden");
+    loginBox.classList.remove("hidden");
+}
+
+/* CRUD Operations */
+function addEmployee(){
+    let name = empName.value;
+    let role = empRole.value;
+    let salary = empSalary.value;
+
+    if(!name || !role || !salary){
+        alert("All fields required");
+        return;
+    }
+
+    if(editIndex === -1){
+        employees.push({name,role,salary});
+    }else{
+        employees[editIndex] = {name,role,salary};
+        editIndex = -1;
+    }
+
+    empName.value="";
+    empRole.value="";
+    empSalary.value="";
+    displayEmployees();
+}
+
+function displayEmployees(){
+    let html="";
+    employees.forEach((e,i)=>{
+        html+=`
+        <tr>
+            <td>${e.name}</td>
+            <td>${e.role}</td>
+            <td>${e.salary}</td>
+            <td>
+                <button onclick="editEmployee(${i})">Edit</button>
+                <button onclick="deleteEmployee(${i})">Delete</button>
+            </td>
+        </tr>`;
+    });
+    empTable.innerHTML = html;
+}
+
+function editEmployee(i){
+    empName.value = employees[i].name;
+    empRole.value = employees[i].role;
+    empSalary.value = employees[i].salary;
+    editIndex = i;
+}
+
+function deleteEmployee(i){
+    employees.splice(i,1);
+    displayEmployees();
+}
+</script>
+
+</body>
+</html>
